@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OBOR — SYSTEM GULISTAN</title>
+    <style>
+        :root {
+            --neon-green: #00e676;
+            --bg-dark: #0a0f1a;
+            --bg-accent: #121b2d;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-gray: #b0b8c4;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; text-transform: uppercase; scroll-behavior: smooth; }
+
+        body {
+            background: radial-gradient(circle at top right, var(--bg-accent), var(--bg-dark));
+            color: white; overflow-x: hidden; background-attachment: fixed;
+        }
+
+        header {
+            position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between;
+            align-items: center; padding: 15px 40px; z-index: 1000;
+            background: rgba(10, 15, 26, 0.9); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo { font-size: 28px; font-weight: 900; color: var(--neon-green); letter-spacing: -2px; text-decoration: none; }
+
+        nav.nav-links { display: flex; gap: 15px; }
+        nav.nav-links a {
+            color: white; text-decoration: none; font-size: 10px; font-weight: 900;
+            opacity: 0.6; transition: 0.3s;
+        }
+        nav.nav-links a:hover { opacity: 1; color: var(--neon-green); }
+
+        .burger { display: none; cursor: pointer; flex-direction: column; gap: 5px; z-index: 1100; }
+        .burger span { width: 25px; height: 2px; background: var(--neon-green); }
+
+        .mobile-nav {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            background: var(--bg-dark); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 25px; transition: 0.5s; z-index: 1050;
+        }
+        .mobile-nav.active { right: 0; }
+        .mobile-nav a { color: white; text-decoration: none; font-size: 18px; font-weight: 900; }
+
+        .order-fixed {
+            position: fixed; bottom: 30px; left: 30px; z-index: 1000;
+            background: var(--neon-green); color: black; padding: 15px 25px;
+            font-weight: 900; text-decoration: none; border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 230, 118, 0.3);
+            transition: 0.3s; transform: skew(-5deg);
+        }
+
+        section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 120px 10vw; }
+        h1 { font-size: clamp(40px, 10vw, 110px); line-height: 0.9; font-weight: 900; margin-bottom: 40px; }
+        h2 { font-size: clamp(30px, 7vw, 70px); font-weight: 900; margin-bottom: 40px; color: var(--neon-green); }
+        .highlight { color: var(--neon-green); }
+        p { max-width: 650px; font-size: 17px; text-transform: none; color: var(--text-gray); margin-bottom: 30px; line-height: 1.5; }
+
+        .btn {
+            background: var(--neon-green); color: black; padding: 20px 40px; font-size: 20px;
+            font-weight: 900; text-decoration: none; display: inline-block;
+            transition: 0.3s; transform: skew(-10deg); border-radius: 4px; border: none; cursor: pointer;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; }
+        .card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); padding: 35px; position: relative; transition: 0.3s; }
+        .card:hover { border-color: var(--neon-green); }
+        .card h3 { font-size: 24px; margin-bottom: 15px; color: var(--neon-green); }
+        .step-num { font-size: 50px; font-weight: 900; opacity: 0.1; position: absolute; top: 10px; right: 20px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; text-align: center; }
+
+        .lang { position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; gap: 8px; }
+        .lang button {
+            background: rgba(10, 15, 26, 0.8); border: 1px solid rgba(255,255,255,0.2); color: white;
+            padding: 10px 15px; cursor: pointer; font-weight: 900; border-radius: 5px; font-size: 12px;
+        }
+        .lang button.active { background: var(--neon-green); color: black; border: none; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s all ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        footer { padding: 60px; text-align: center; font-weight: 900; color: #222; letter-spacing: 5px; }
+
+        @media (max-width: 1100px) {
+            nav.nav-links { display: none; }
+            .burger { display: flex; }
+            header { padding: 15px 25px; }
+            section { padding: 100px 6vw; }
+            .order-fixed { bottom: 20px; left: 20px; padding: 12px 20px; font-size: 12px; }
+            .lang { bottom: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo">OBOR</a>
+    <nav class="nav-links">
+        <a href="#what" id="nav1">ЧТО ВОЗИМ</a>
+        <a href="#how" id="nav2">КАК ЗАКАЗАТЬ</a>
+        <a href="#why" id="nav3">ПОЧЕМУ МЫ?</a>
+        <a href="#qa" id="nav4">ВОПРОСЫ</a>
+        <a href="#jobs" id="nav5">КУРЬЕРАМ</a>
+        <a href="#contacts" id="nav6">КОНТАКТЫ</a>
+    </nav>
+    <div class="burger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </div>
+</header>
+
+<div class="mobile-nav" id="mobileNav">
+    <a href="#what" onclick="toggleMenu()" id="m1">ЧТО ВОЗИМ</a>
+    <a href="#how" onclick="toggleMenu()" id="m2">КАК ЗАКАЗАТЬ</a>
+    <a href="#why" onclick="toggleMenu()" id="m3">ПОЧЕМУ МЫ</a>
+    <a href="#qa" onclick="toggleMenu()" id="m4">ВОПРОСЫ</a>
+    <a href="#jobs" onclick="toggleMenu()" id="m5">КУРЬЕРАМ</a>
+    <a href="#contacts" onclick="toggleMenu()" id="m6">КОНТАКТЫ</a>
+</div>
+
+<a href="https://t.me/oobor_bot" class="order-fixed" id="fixedBtn">ЗАКАЗАТЬ -></a>
+
+<div class="lang">
+    <button onclick="setLang('ru')" id="ruBtn" class="active">RU</button>
+    <button onclick="setLang('uz')" id="uzBtn">UZ</button>
+</div>
+
+<section id="hero">
+    <h1 id="title">ДОСТАВКА <br> В <span class="highlight">ГУЛИСТАНЕ.</span></h1>
+    <p id="subtitle">МЫ — ТВОИ НОГИ. НУЖНО ЧТО-ТО ПРИВЕЗТИ? ПРОСТО НАПИШИ В TELEGRAM. РАБОТАЕМ ПО ВСЕМУ ГОРОДУ 24/7.</p>
+    <a class="btn" href="https://t.me/oobor_bot" target="_blank" id="btnMain">ЗАПУСТИТЬ БОТА</a>
+</section>
+
+<section id="what" class="reveal">
+    <h2 id="what_h">ЧТО МЫ ВОЗИМ.</h2>
+    <div class="grid">
+        <div class="card"><h3>📦</h3><p id="wt1">ЛЮБЫЕ ПОСЫЛКИ ДО 10 КГ</p></div>
+        <div class="card"><h3>🍔</h3><p id="wt2">ЕДУ ИЗ ЛЮБЫХ РЕСТОРАНОВ</p></div>
+        <div class="card"><h3>🔑</h3><p id="wt3">ЗАБЫТЫЕ КЛЮЧИ И ВЕЩИ</p></div>
+        <div class="card"><h3>📄</h3><p id="wt4">ВАЖНЫЕ ДОКУМЕНТЫ</p></div>
+    </div>
+</section>
+
+<section id="how" class="reveal">
+    <h2 id="how_h">КАК ЗАКАЗАТЬ.</h2>
+    <div class="grid">
+        <div class="card"><div class="step-num">01</div><h3 id="s1_h">ЧАТ-БОТ</h3><p id="s1_p">ОТКРЫВАЕШЬ MINI APP ВНУТРИ ТЕЛЕГРАМ.</p></div>
+        <div class="card"><div class="step-num">02</div><h3 id="s2_h">ДЕТАЛИ</h3><p id="s2_p">ПИШЕШЬ ЧТО НУЖНО И СТАВИШЬ ТОЧКУ НА КАРТЕ.</p></div>
+        <div class="card"><div class="step-num">03</div><h3 id="s3_h">ДОСТАВКА</h3><p id="s3_p">КУРЬЕР ПРИНИМАЕТ ЗАКАЗ И ЛЕТИТ К ТЕБЕ.</p></div>
+    </div>
+</section>
+
+<section class="reveal" style="min-height: auto; padding-top: 50px; padding-bottom: 50px;">
+    <div class="stats-grid">
+        <div>
+            <div class="highlight" style="font-size: 48px; font-weight: 900;">20-40</div>
+            <p id="st1">МИНУТ НА ДОСТАВКУ</p>
+        </div>
+        <div>
+            <div class="highlight" style="font-size: 48px; font-weight: 900;">24/7</div>
+            <p id="st2">БЕЗ ВЫХОДНЫХ</p>
+        </div>
+        <div>
+            <div class="highlight" style="font-size: 48px; font-weight: 900;">100%</div>
+            <p id="st3">КОНФИДЕНЦИАЛЬНО</p>
+        </div>
+    </div>
+</section>
+
+<section id="why" class="reveal">
+    <h2 id="why_h">ПОЧЕМУ МЫ.</h2>
+    <div class="grid">
+        <div class="card"><h3 id="w1_h">БЕЗ ПРИЛОЖЕНИЙ</h3><p id="w1_p">НИКАКОЙ ЛИШНЕЙ ПАМЯТИ В ТЕЛЕФОНЕ. ТОЛЬКО МЕССЕНДЖЕР.</p></div>
+        <div class="card"><h3 id="w2_h">ЧЕСТНЫЙ ЧЕК</h3><p id="w2_p">ТЫ ВИДИШЬ РЕАЛЬНУЮ СТОИМОСТЬ ТОВАРА ПО ФОТО ЧЕКА.</p></div>
+        <div class="card"><h3 id="w3_h">ГИБКОСТЬ</h3><p id="w3_p">ПРИВЕЗЕМ ХОТЬ ОДНУ ЖВАЧКУ, ХОТЬ ЦЕЛЫЙ ПАКЕТ ПРОДУКТОВ.</p></div>
+    </div>
+</section>
+
+<section id="qa" class="reveal">
+    <h2 id="qa_h">ВОПРОСЫ.</h2>
+    <div class="grid">
+        <div class="card"><h3 id="q1_h">СКОЛЬКО СТОИТ?</h3><p id="q1_p">7000 СУМ ЗА ВЫЗОВ + 1000 СУМ ЗА КАЖДЫЙ КИЛОМЕТР ПУТИ.</p></div>
+        <div class="card"><h3 id="q2_h">КАК ПЛАТИТЬ?</h3><p id="q2_p">НАЛИЧНЫМИ ИЛИ ПЕРЕВОДОМ КУРЬЕРУ ПОСЛЕ ПОЛУЧЕНИЯ.</p></div>
+        <div class="card"><h3 id="q3_h">ГДЕ ВЫ ЕСТЬ?</h3><p id="q3_p">РАБОТАЕМ ПО ВСЕМУ ГУЛИСТАНУ 24/7 БЕЗ ВЫХОДНЫХ.</p></div>
+    </div>
+</section>
+
+<section id="jobs" class="reveal">
+    <h2 id="job_h">КУРЬЕРАМ.</h2>
+    <div class="grid">
+        <div class="card"><h3 id="j1_h">НУЖНЫ ЛЮДИ</h3><p id="j1_p">СВОБОДНЫЙ ГРАФИК, ВЫПЛАТЫ СРАЗУ. РАБОТАЙ, КОГДА ХОЧЕШЬ.</p></div>
+        <div class="card"><h3 id="j2_h">ЧТО НУЖНО?</h3><p id="j2_p">ТЕЛЕФОН С ИНТЕРНЕТОМ И ЗНАНИЕ ГОРОДА. ОСТАЛЬНОМУ НАУЧИМ.</p></div>
+    </div>
+</section>
+
+<section id="contacts" class="reveal">
+    <h2 id="contact_h">КОНТАКТЫ.</h2>
+    <div class="grid">
+        <div class="card"><h3 id="c1_h">ТЕЛЕГРАМ</h3><p id="c1_p">ОПЕРАТОР: @OBOR_ADMIN</p></div>
+        <div class="card"><h3 id="c2_h">ТЕЛЕФОН</h3><p id="c2_p">+998 90 123 45 67</p></div>
+    </div>
+</section>
+
+<footer id="footerText">OBOR // SYSTEM // 2026</footer>
+
+<script>
+    function toggleMenu() { document.getElementById('mobileNav').classList.toggle('active'); }
+    function reveal() {
+        var reveals = document.querySelectorAll(".reveal");
+        for (var i = 0; i < reveals.length; i++) {
+            var elementTop = reveals[i].getBoundingClientRect().top;
+            if (elementTop < window.innerHeight - 100) { reveals[i].classList.add("active"); }
+        }
+    }
+    window.addEventListener("scroll", reveal);
+    window.onload = reveal;
+
+    const langData = {
+        ru: {
+            nav1: 'ЧТО ВОЗИМ', nav2: 'КАК ЗАКАЗАТЬ', nav3: 'ПОЧЕМУ МЫ', nav4: 'ВОПРОСЫ', nav5: 'КУРЬЕРАМ', nav6: 'КОНТАКТЫ',
+            m1: 'ЧТО ВОЗИМ', m2: 'КАК ЗАКАЗАТЬ', m3: 'ПОЧЕМУ МЫ', m4: 'ВОПРОСЫ', m5: 'КУРЬЕРАМ', m6: 'КОНТАКТЫ',
+            fixedBtn: 'ЗАКАЗАТЬ ->',
+            title: 'ДОСТАВКА <br> В <span class="highlight">ГУЛИСТАНЕ.</span>',
+            subtitle: 'МЫ — ТВОИ НОГИ. НУЖНО ЧТО-ТО ПРИВЕЗТИ? ПРОСТО НАПИШИ В TELEGRAM. РАБОТАЕМ ПО ВСЕМУ ГОРОДУ 24/7.',
+            btnMain: 'ЗАПУСТИТЬ БОТА',
+            what_h: 'ЧТО МЫ ВОЗИМ.',
+            wt1: 'ЛЮБЫЕ ПОСЫЛКИ ДО 10 КГ', wt2: 'ЕДУ ИЗ ЛЮБЫХ РЕСТОРАНОВ', wt3: 'ЗАБЫТЫЕ КЛЮЧИ И ВЕЩИ', wt4: 'ВАЖНЫЕ ДОКУМЕНТЫ',
+            how_h: 'КАК ЗАКАЗАТЬ.',
+            s1_h: 'ЧАТ-БОТ', s1_p: 'ОТКРЫВАЕШЬ MINI APP ВНУТРИ ТЕЛЕГРАМ.',
+            s2_h: 'ДЕТАЛИ', s2_p: 'ПИШЕШЬ ЧТО НУЖНО И СТАВИШЬ ТОЧКУ НА КАРТЕ.',
+            s3_h: 'ДОСТАВКА', s3_p: 'КУРЬЕР ПРИНИМАЕТ ЗАКАЗ И ЛЕТИТ К ТЕБЕ.',
+            st1: 'МИНУТ НА ДОСТАВКУ', st2: 'БЕЗ ВЫХОДНЫХ', st3: 'КОНФИДЕНЦИАЛЬНО',
+            why_h: 'ПОЧЕМУ МЫ.',
+            w1_h: 'БЕЗ ПРИЛОЖЕНИЙ', w1_p: 'НИКАКОЙ ЛИШНЕЙ ПАМЯТИ В ТЕЛЕФОНЕ. ТОЛЬКО МЕССЕНДЖЕР.',
+            w2_h: 'ЧЕСТНЫЙ ЧЕК', w2_p: 'ТЫ ВИДИШЬ РЕАЛЬНУЮ СТОИМОСТЬ ТОВАРА ПО ФОТО ЧЕКА.',
+            w3_h: 'ГИБКОСТЬ', w3_p: 'ПРИВЕЗЕМ ХОТЬ ОДНУ ЖВАЧКУ, ХОТЬ ЦЕЛЫЙ ПАКЕТ ПРОДУКТОВ.',
+            qa_h: 'ВОПРОСЫ.',
+            q1_h: 'СКОЛЬКО СТОИТ?', q1_p: '7000 СУМ ЗА ВЫЗОВ + 1000 СУМ ЗА КАЖДЫЙ КИЛОМЕТР ПУТИ.',
+            q2_h: 'КАК ПЛАТИТЬ?', q2_p: 'НАЛИЧНЫМИ ИЛИ ПЕРЕВОДОМ КУРЬЕРУ ПОСЛЕ ПОЛУЧЕНИЯ.',
+            q3_h: 'ГДЕ ВЫ ЕСТЬ?', q3_p: 'РАБОТАЕМ ПО ВСЕМУ ГУЛИСТАНУ 24/7 БЕЗ ВЫХОДНЫХ.',
+            job_h: 'КУРЬЕРАМ.',
+            j1_h: 'НУЖНЫ ЛЮДИ', j1_p: 'СВОБОДНЫЙ ГРАФИК, ВЫПЛАТЫ СРАЗУ. РАБОТАЙ, КОГДА ХОЧЕШЬ.',
+            j2_h: 'ЧТО НУЖНО?', j2_p: 'ТЕЛЕФОН С ИНТЕРНЕТОМ И ЗНАНИЕ ГОРОДА. ОСТАЛЬНОМУ НАУЧИМ.',
+            contact_h: 'КОНТАКТЫ.',
+            c1_h: 'ТЕЛЕГРАМ', c1_p: 'ОПЕРАТОР: @OBOR_ADMIN',
+            c2_h: 'ТЕЛЕФОН', c2_p: '+998 90 123 45 67',
+            footerText: 'OBOR // SYSTEM // 2026'
+        },
+        uz: {
+            nav1: 'NIMA TASHIYMIZ', nav2: 'QANDAY BUYURTMA', nav3: 'NEGA BIZ', nav4: 'SAVOLLAR', nav5: 'KURYERLARGA', nav6: 'ALOQA',
+            m1: 'NIMA TASHIYMIZ', m2: 'QANDAY BUYURTMA', m3: 'NEGA BIZ', m4: 'SAVOLLAR', m5: 'KURYERLARGA', m6: 'ALOQA',
+            fixedBtn: 'BUYURTMA ->',
+            title: '<span class="highlight">GULISTONDA</span><br> YETKAZISH.',
+            subtitle: 'BIZ — SIZNING OYOG\'INGIZMIZ. NIMADIR OLIB KELISH KERAKMI? TELEGRAMGA YOZING. SHAHAR BO\'YLAB 24/7 ISHLAYMIZ.',
+            btnMain: 'BOTNI OCHISH',
+            what_h: 'NIMALARNI TASHIYMIZ.',
+            wt1: '10 KG GACHA BO\'LGAN HAR QANDAY POSILKALAR', wt2: 'ISTALGAN RESTORANDAN TAOMLAR', wt3: 'KALIT VA BUYUMLAR', wt4: 'MUHIM HUJJATLAR',
+            how_h: 'BUYURTMA BERISH.',
+            s1_h: 'CHAT-BOT', s1_p: 'TELEGRAM ICHIDAGI MINI APP-NI OCHASIZ.',
+            s2_h: 'DETALLAR', s2_p: 'NIMA KERAKLIGINI YOZASIZ VA XARITADA NUQTANI QO\'YASIZ.',
+            s3_h: 'YETKAZISH', s3_p: 'KURYER BUYURTMANI QABUL QILADI VA SIZ TOMON UCHADI.',
+            st1: 'YETKAZIB BERISH VAQTI (DAQIQA)', st2: 'DAM OLISHSIZ', st3: '100% MAXFIYLIK',
+            why_h: 'NEGA BIZ.',
+            w1_h: 'ILOVALARSIZ', w1_p: 'TELEFON XOTIRASINI TO\'LDIRISH SHART EMAS. FAQAT MESSENJER.',
+            w2_h: 'HALOL CHEK', w2_p: 'SIZ MAHSULOTNING HAQIQIY NARXINI CHEK RASMI ORQALI KO\'RASIZ.',
+            w3_h: 'MOSLASHUVCHANLIK', w3_p: 'XOHISHINGIZGA QARAB, SAQICH YOKI BUTUN BIR PAKET MAHSULOT.',
+            qa_h: 'SAVOLLAR.',
+            q1_h: 'NARXI QANCHA?', q1_p: 'CHIQISH 7000 SO\'M + HAR BIR KILOMETR UCHUN 1000 SO\'M.',
+            q2_h: 'TO\'LOV QANDAY?', q2_p: 'NAQD PUL YOKI KARTADAN KARTAGA OLGANDAN KEYIN.',
+            q3_h: 'QAYERDASIZLAR?', q3_p: 'GULISTON BO\'YLAB 24/7 DAM OLISHSIZ ISHLAYMIZ.',
+            job_h: 'KURYERLARGA.',
+            j1_h: 'ODAMLAR KERAK', j1_p: 'ERKIN GRAFIK, TO\'LOVLAR DARHOL. XOHLAGAN VAQTINGIZDA ISHLANG.',
+            j2_h: 'NIMA KERAK?', j2_p: 'INTERNETI BOR TELEFON VA SHAHARNI BILISH. QOLGANINI O\'RGATAMIZ.',
+            contact_h: 'ALOQA.',
+            c1_h: 'TELEGRAM', c1_p: 'OPERATOR: @OBOR_ADMIN',
+            c2_h: 'TELEFON', c2_p: '+998 90 123 45 67',
+            footerText: 'OBOR // TIZIMI // 2026'
+        }
+    };
+
+    function setLang(lang) {
+        for (let id in langData[lang]) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = langData[lang][id];
+        }
+        document.getElementById('ruBtn').className = lang === 'ru' ? 'active' : '';
+        document.getElementById('uzBtn').className = lang === 'uz' ? 'active' : '';
+    }
+</script>
+</body>
+</html>
